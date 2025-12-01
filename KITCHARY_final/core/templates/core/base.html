@@ -1,0 +1,159 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KITCHARY | {% block title %}{% endblock %}</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff;
+      color: #000000;
+    }
+
+    nav {
+      background-color: #fff;
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      background:#ffcc00;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1px;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 25px;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 20px;
+      transition: background-color 0.2s;
+    }
+
+    nav ul li a:hover,
+    nav ul li a.active {
+      background-color: #fff7cc;
+      color: #000;
+    }
+
+    .sign-in-btn {
+      background: #ffcc00;
+      color: #ffffff;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .sign-in-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+    }
+
+    footer {
+      background-color: #f9f9f9;
+      padding: 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+      margin-top: 60px;
+    }
+
+    input, select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    input:focus, select:focus {
+      border-color: #ffcc00;
+      outline: none;
+    }
+    input[type="text"], input[type="number"], select, textarea {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        border-color: #66bb6a;
+        outline: none;
+        box-shadow: 0 0 5px rgba(102, 187, 106, 0.5);
+    }
+      .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffcc00; /* Yellow color */
+    text-decoration: none; /* Removes underline */
+  }
+
+  .logo:hover {
+    text-decoration: none;  /* Ensure no underline on hover */
+    box-shadow: none;       /* Remove any shadow */
+    color: #ffcc00;          /* Optional: subtle hover color change */
+  }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <a href="{% if user.is_authenticated and user.is_superuser %}
+             {% url 'admin_dashboard' %}
+          {% elif user.is_authenticated %}
+             {% url 'customer_dashboard' %}
+          {% else %}
+             {% url 'login' %}
+          {% endif %}" 
+   class="logo">KITCHARY</a>
+    <ul>
+  <li><a href="{% url 'menu' %}">Menu</a></li>
+  <li><a href="{% url 'order_list' %}">Orders</a></li>
+  {% if user.is_authenticated %}
+    <li><a href="{% url 'payment_list' %}">Payments</a></li>
+    <li><a href="{% url 'logout' %}" class="sign-in-btn">Logout</a></li>
+  {% else %}
+    <li><a href="{% url 'login' %}" class="sign-in-btn">Sign In</a></li>
+  {% endif %}
+</ul>
+  </nav>
+  <!-- Page Content -->
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+  <!-- Footer -->
+   <br><br><br><br><br>
+  <footer>
+    &copy; 2025 Kitchary. All rights reserved.
+  </footer>
+  {% block extra_script %}{% endblock %}
+</body>
+</html>

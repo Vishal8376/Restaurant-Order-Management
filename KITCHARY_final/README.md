@@ -222,7 +222,7 @@ The application runs in DEBUG mode for development. For production:
 3. Use a production database (PostgreSQL)
 4. Set up static file serving
 
-##  Future Enhancements
+## 📈 Future Enhancements
 
 - **Real Payment Gateway**: Integrate Stripe/PayPal
 - **Email Notifications**: Order confirmation emails
@@ -253,4 +253,4 @@ For issues or questions:
 
 ---
 
-Built with using Django
+Built with ❤️ using Django

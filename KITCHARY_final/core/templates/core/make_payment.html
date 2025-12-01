@@ -1,0 +1,154 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+<style>
+  .payment-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .order-details {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border-left: 4px solid #28a745;
+  }
+  
+  .payment-btn {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    margin: 20px auto;
+  }
+  
+  .payment-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
+  }
+  
+  .message {
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  
+  .message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+  }
+  
+  .message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+  }
+</style>
+
+<div class="payment-container">
+  <h2 style="text-align: center; color: #333; margin-bottom: 30px;">💳 Payment Processing</h2>
+  
+  <!-- Display Messages -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="message {{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+  
+  {% if order %}
+    <div class="order-details">
+      <h3 style="margin-top: 0; color: #28a745;">Order Details</h3>
+      <p><strong>Order ID:</strong> #{{ order.id }}</p>
+      <p><strong>Total Amount:</strong> ₹{{ order.total_amount|floatformat:2 }}</p>
+      <p><strong>Order Date:</strong> {{ order.created_at|date:"F d, Y h:i A" }}</p>
+      
+      <!-- Show order items -->
+      <h4 style="margin-top: 20px; color: #333;">Items Ordered:</h4>
+      {% for item in order.orderitem_set.all %}
+        <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee;">
+          <span>{{ item.menu_item.name }} × {{ item.quantity }}</span>
+          <span>₹{{ item.menu_item.price|floatformat:2 }}</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Check if payment already exists -->
+    {% if order.payment_set.first and order.payment_set.first.status == 'Completed' %}
+      <div style="text-align: center; padding: 20px; background: #d4edda; border-radius: 8px; color: #155724;">
+        <h3>✅ Payment Already Completed</h3>
+        <p>This order has been paid successfully.</p>
+        <p><strong>Payment ID:</strong> #{{ order.payment_set.first.id }}</p>
+        <p><strong>Payment Date:</strong> {{ order.payment_set.first.payment_date|date:"F d, Y h:i A" }}</p>
+      </div>
+    {% else %}
+      <!-- Payment Form -->
+      <div style="text-align: center;">
+        <h3 style="color: #333;">Complete Payment</h3>
+        <p>Click the button below to process your payment securely.</p>
+        
+        <form method="POST">
+          {% csrf_token %}
+          <button type="submit" class="payment-btn">
+            💳 Pay ₹{{ order.total_amount|floatformat:2 }}
+          </button>
+        </form>
+        
+        <p style="font-size: 12px; color: #666; margin-top: 15px;">
+          🔒 Your payment is processed securely
+        </p>
+      </div>
+    {% endif %}
+  {% else %}
+    <div style="text-align: center; padding: 40px;">
+      <h3 style="color: #dc3545;">❌ Order Not Found</h3>
+      <p>The order you're trying to pay for doesn't exist or doesn't belong to you.</p>
+      <a href="{% url 'order_list' %}" style="color: #007bff; text-decoration: none;">← Back to Orders</a>
+    </div>
+  {% endif %}
+  
+  <!-- Payment History Section (if needed) -->
+  {% if payment_history %}
+    <div style="margin-top: 40px;">
+      <h3 style="color: #333; border-bottom: 2px solid #eee; padding-bottom: 10px;">Recent Payment History</h3>
+      
+      <div style="max-height: 200px; overflow-y: auto;">
+        {% for payment in payment_history|slice:":5" %}
+          <div style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f0f0f0;">
+            <div>
+              <strong>Order #{{ payment.order.id }}</strong><br>
+              <small style="color: #666;">{{ payment.payment_date|date:"M d, Y" }}</small>
+            </div>
+            <div style="text-align: right;">
+              <strong>₹{{ payment.amount|floatformat:2 }}</strong><br>
+              <span style="color: {% if payment.status == 'Completed' %}#28a745{% else %}#ffc107{% endif %};">
+                {{ payment.status }}
+              </span>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      
+      <div style="text-align: center; margin-top: 15px;">
+        <a href="{% url 'payment_list' %}" style="color: #007bff; text-decoration: none;">View All Payments →</a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="container" style="max-width: 900px; margin: 40px auto; padding: 20px; background-color: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+    <h2 style="text-align:center; color: #2e7d32; font-size: 32px; margin-bottom: 30px;">🧾 Order History</h2>
+
+    {% if orders %}
+        {% for order in orders %}
+            <div style="background-color: #f9f9f9; border: 1px solid #e0e0e0; border-left: 6px solid #4caf50; padding: 20px; margin-bottom: 20px; border-radius: 10px;">
+                <p><strong>Order ID:</strong> #{{ order.id }}</p>
+                <p><strong>Customer:</strong> {{ order.user.first_name }} {{ order.user.last_name }}</p>
+
+                <p><strong>Items:</strong></p>
+                {% if order.orderitem_set.all %}
+                    <ul style="margin-left: 20px;">
+                        {% for item in order.orderitem_set.all %}
+                            <li>
+                                {{ item.menu_item.name }} × {{ item.quantity }} 
+                                – ₹{{ item.menu_item.price|floatformat:2 }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p style="margin-left: 20px;"><em>No items in this order.</em></p>
+                {% endif %}
+
+                <p><strong>Total Amount:</strong> ₹{{ order.total_amount|floatformat:2 }}</p>
+                <p><strong>Ordered On:</strong> {{ order.created_at|date:"M d, Y H:i" }}</p>
+                
+                <!-- Payment Status -->
+                <div style="margin-top: 15px;">
+                    {% if order.payment_set.first %}
+                        {% if order.payment_set.first.status == 'Completed' %}
+                            <span style="background: #d4edda; color: #155724; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 600;">
+                                ✅ Paid
+                            </span>
+                        {% else %}
+                            <span style="background: #fff3cd; color: #856404; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 600;">
+                                ⏳ Payment Pending
+                            </span>
+                            <a href="{% url 'payment' order.id %}" style="margin-left: 10px; color: #007bff; text-decoration: none; font-size: 12px;">
+                                Pay Now →
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <span style="background: #f8d7da; color: #721c24; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 600;">
+                            ❌ Payment Required
+                        </span>
+                        <a href="{% url 'payment' order.id %}" style="margin-left: 10px; color: #007bff; text-decoration: none; font-size: 12px;">
+                            Pay Now →
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="text-align:center; color: #757575;">No orders have been placed yet.</p>
+    {% endif %}
+
+    <div style="text-align:center; margin-top: 30px;">
+        <a href="{% url 'menu' %}">
+            <button style="padding: 12px 24px; background-color: #4caf50; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+                🍽️ Browse Menu
+            </button>
+        </a>
+    </div>
+</div>
+{% endblock %}

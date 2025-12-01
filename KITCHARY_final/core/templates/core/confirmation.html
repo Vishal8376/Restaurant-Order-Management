@@ -1,0 +1,139 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<style>
+  .confirmation-container {
+    max-width: 700px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
+  }
+  
+  .success-title {
+    color: #28a745;
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+  
+  .primary-btn {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 25px;
+    transition: all 0.3s ease;
+  }
+  
+  .primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  }
+  
+  .item-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .item-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .item-list li:last-child {
+    border-bottom: none;
+  }
+</style>
+
+<div class="confirmation-container">
+    {% if payment %}
+        <!-- Payment Success Page -->
+        <h2 class="success-title">💳 Payment Successful!</h2>
+        <hr style="margin: 20px 0;">
+        
+        <div style="color: #333;">
+            <p><strong>Payment ID:</strong> #{{ payment.id }}</p>
+            <p><strong>Order ID:</strong> #{{ payment.order.id }}</p>
+            <p><strong>Amount Paid:</strong> ₹{{ payment.amount|floatformat:2 }}</p>
+            <p><strong>Payment Date:</strong> {{ payment.payment_date|date:"F d, Y h:i A" }}</p>
+            <p><strong>Status:</strong> 
+                <span style="color: #28a745; font-weight: bold;">{{ payment.status }}</span>
+            </p>
+            
+            <div style="background: #d4edda; padding: 15px; border-radius: 8px; margin: 20px 0; color: #155724;">
+                <strong>🎉 Thank you for your payment!</strong><br>
+                Your order is now being processed.
+            </div>
+        </div>
+        
+    {% elif order %}
+        <!-- Order Confirmation Page -->
+        <h2 class="success-title">✅ Order Confirmed!</h2>
+        <hr style="margin: 20px 0;">
+
+        <div style="color: #333;">
+            <p><strong>Order ID:</strong> #{{ order.id }}</p>
+            <p>Thank you, <strong>{{ order.user.username }}</strong>!<br>Your order has been successfully placed. 🎉</p>
+
+            <p style="font-weight: bold; margin-top: 20px;">
+                🚚 Estimated Delivery: <span style="color: #007b00;">30–45 minutes</span>
+            </p>
+
+            <h4 style="margin-top: 30px;">🧾 Ordered Items:</h4>
+            <ul class="item-list">
+                {% for orderitem in order.orderitem_set.all %}
+                    <li>
+                        <span>{{ orderitem.menu_item.name }} × {{ orderitem.quantity }}</span>
+                        <span>₹{{ orderitem.menu_item.price|floatformat:2 }}</span>
+                    </li>
+                {% empty %}
+                    <li>No items found.</li>
+                {% endfor %}
+            </ul>
+
+            <p style="font-size: 18px; font-weight: bold; color: #28a745;">
+                <strong>Total Amount: ₹{{ order.total_amount|floatformat:2 }}</strong>
+            </p>
+
+            <!-- Payment Status -->
+            {% if order.payment_set.first %}
+                {% if order.payment_set.first.status == 'Completed' %}
+                    <div style="background: #d4edda; padding: 15px; border-radius: 8px; margin: 20px 0; color: #155724;">
+                        <strong>✅ Payment Completed</strong><br>
+                        Payment ID: #{{ order.payment_set.first.id }}
+                    </div>
+                {% else %}
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; color: #856404;">
+                        <strong>⏳ Payment Pending</strong><br>
+                        <a href="{% url 'payment' order.id %}" style="color: #007bff;">Complete Payment →</a>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div style="background: #f8d7da; padding: 15px; border-radius: 8px; margin: 20px 0; color: #721c24;">
+                    <strong>❌ Payment Required</strong><br>
+                    <a href="{% url 'payment' order.id %}" style="color: #007bff;">Make Payment →</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <a href="{% url 'menu' %}" class="primary-btn">
+        Continue Browsing
+    </a>
+</div>
+{% endblock %}

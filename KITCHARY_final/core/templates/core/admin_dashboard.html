@@ -1,0 +1,57 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="admin-dashboard" style="padding: 2rem; font-family: 'Segoe UI', sans-serif;">
+  <h1 style="font-size: 2rem; margin-bottom: 1rem;">Welcome Back, Admin</h1>
+
+  <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem;">
+    <div class="stat-card" style="padding: 1.5rem; background: #ffcc00; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+      <h3>Total Orders</h3>
+      <p style="font-size: 1.4rem; font-weight: bold;">{{ total_orders }}</p>
+    </div>
+    <div class="stat-card" style="padding: 1.5rem; background: #ffcc00; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+      <h3>Total Revenue</h3>
+      <p style="font-size: 1.4rem; font-weight: bold;">₹{{ total_revenue }}</p>
+    </div>
+    <div class="stat-card" style="padding: 1.5rem; background: #ffcc00; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+      <h3>Pending Payments</h3>
+      <p style="font-size: 1.4rem; font-weight: bold;">{{ pending_payments }}</p>
+    </div>
+    <div class="stat-card" style="padding: 1.5rem; background: #ffcc00; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+      <h3>Menu Items</h3>
+      <p style="font-size: 1.4rem; font-weight: bold;">{{ menu_items }}</p>
+    </div>
+  </div>
+
+  <div style="margin-top: 2.5rem;">
+    <h2>Recent Orders</h2>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+      <thead style="color: white;">
+        <tr style="background-color: #ffcc00;">
+          <th style="padding: 10px;">Order ID</th>
+          <th style="padding: 10px;">Customer</th>
+          <th style="padding: 10px;">Amount</th>
+          <th style="padding: 10px;">Status</th>
+        </tr>
+      </thead>
+      <tbody style="color: black;">
+        {% for order in recent_orders %}
+       {% with order.payment_set.first as payment %}
+        <tr>
+          <td style="padding: 10px;">#{{ order.id }}</td>
+          <td style="padding: 10px;">{{ order.user.username }}</td>
+          <td style="padding: 10px;">₹{{ payment.amount|default:"0.00" }}</td>
+          <td style="padding: 10px;">{{ payment.status|default:"N/A" }}</td>
+        </tr>
+        {% endwith %}
+
+        {% empty %}
+          <tr>
+            <td colspan="4" style="padding: 10px; text-align:center;">No recent orders</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

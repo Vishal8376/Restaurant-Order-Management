@@ -1,0 +1,10 @@
+{% extends 'core/base.html' %}
+{% block title %}Logout{% endblock %}
+
+{% block content %}
+  <div style="text-align: center; padding: 80px 20px;">
+    <h2>You have been logged out.</h2>
+    <p>Thanks for visiting Kitchary!</p>
+    <a href="{% url 'login' %}" class="sign-in-btn" style="margin-top: 20px; display: inline-block;">Login Again</a>
+  </div>
+{% endblock %}

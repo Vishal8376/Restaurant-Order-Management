@@ -1,0 +1,51 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div style="max-width: 900px; margin: 60px auto; padding: 40px; background: #fefefe; border-radius: 16px; box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1); font-family: 'Segoe UI', sans-serif;">
+    <h2 style="text-align:center; color: #2e7d32; font-size: 28px; margin-bottom: 30px;">Place Your Order 🧾</h2>
+
+    <form method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
+        {% csrf_token %}
+        
+        {% for item in form_fields_with_items %}
+        <div style="border: 1px solid #ddd; border-radius: 12px; padding: 20px; background: #fafafa; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); display: flex; gap: 15px; align-items: center;">
+            {% if item.menu_item %}
+                <img src="{{ item.menu_item.get_image_url }}" 
+                     alt="{{ item.menu_item.get_image_alt_text }}" 
+                     style="width: 80px; height: 60px; object-fit: cover; border-radius: 8px; flex-shrink: 0;" 
+                     onerror="this.src='{{ item.menu_item.get_fallback_image_url }}'; this.onerror=null;" 
+                     loading="lazy" />
+                <div style="flex-grow: 1;">
+                    <h4 style="margin: 0 0 5px 0; color: #333;">{{ item.menu_item.name }}</h4>
+                    <p style="margin: 0 0 8px 0; color: #666; font-size: 14px;">₹{{ item.menu_item.price }}</p>
+                    {% if item.menu_item.description %}
+                        <p style="margin: 0 0 10px 0; color: #888; font-size: 12px;">{{ item.menu_item.description|truncatewords:6 }}</p>
+                    {% endif %}
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <label for="{{ item.field.id_for_label }}" style="font-weight: 500; color: #555;">Quantity:</label>
+                        {{ item.field }}
+                    </div>
+                    {% if item.field.errors %}
+                        <small style="color: red; display: block; margin-top: 5px;">{{ item.field.errors }}</small>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div>
+                    <h4 style="margin-bottom: 10px; color: #333;">{{ item.field.label }}</h4>
+                    {{ item.field }}
+                    {% if item.field.errors %}
+                        <small style="color: red;">{{ item.field.errors }}</small>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <div style="grid-column: 1 / -1; text-align:center; margin-top: 20px;">
+            <button type="submit" 
+                style="padding: 14px 35px; background-color: #43a047; color: white; font-size: 17px; font-weight: bold; border: none; border-radius: 12px; cursor: pointer; transition: background-color 0.3s;">
+                ✅ Place Order
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

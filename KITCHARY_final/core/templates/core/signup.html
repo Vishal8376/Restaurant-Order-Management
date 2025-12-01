@@ -1,0 +1,85 @@
+{% extends 'core/base.html' %}
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<section style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f8f8f8;">
+  <div style="background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); width: 100%; max-width: 400px;">
+    <h2 style="text-align: center; color: #ffcc00; margin-bottom: 24px;">Create Account</h2>
+
+    <!-- Styled Message Block -->
+    {% if messages %}
+      {% for message in messages %}
+        <div style="
+          padding: 12px;
+          margin-bottom: 20px;
+          border-radius: 8px;
+          text-align: center;
+          font-weight: bold;
+          {% if message.tags == 'success' %}
+            background-color: #e6ffed;
+            border: 1px solid #28a745;
+            color: #28a745;
+          {% else %}
+            background-color: #ffe6e6;
+            border: 1px solid #ff4d4d;
+            color: #ff1a1a;
+          {% endif %}
+        ">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" style="display: flex; flex-direction: column; gap: 18px;">
+      {% csrf_token %}
+      
+      <div>
+        {{ form.username.label_tag }} 
+        {{ form.username }}
+        {% if form.username.errors %}
+          <div style="color: red; font-size: 12px; margin-top: 4px;">{{ form.username.errors }}</div>
+        {% endif %}
+      </div>
+      
+      <div>
+        {{ form.email.label_tag }} 
+        {{ form.email }}
+        {% if form.email.errors %}
+          <div style="color: red; font-size: 12px; margin-top: 4px;">{{ form.email.errors }}</div>
+        {% endif %}
+      </div>
+      
+      <div>
+        {{ form.password1.label_tag }} 
+        {{ form.password1 }}
+        {% if form.password1.errors %}
+          <div style="color: red; font-size: 12px; margin-top: 4px;">{{ form.password1.errors }}</div>
+        {% endif %}
+      </div>
+      
+      <div>
+        {{ form.password2.label_tag }} 
+        {{ form.password2 }}
+        {% if form.password2.errors %}
+          <div style="color: red; font-size: 12px; margin-top: 4px;">{{ form.password2.errors }}</div>
+        {% endif %}
+      </div>
+
+      <label for="role">Select Role</label>
+      <select name="role" id="role" style="padding: 10px; border-radius: 8px; border: 1px solid #ccc;">
+        <option value="customer">Customer</option>
+        <option value="admin">Admin</option>
+      </select>
+
+      <button type="submit" style="padding: 10px; background-color: #ffcc00; border: none; color: #222; font-weight: bold; border-radius: 8px; cursor: pointer;">
+        Sign Up
+      </button>
+    </form>
+
+    <p style="text-align: center; margin-top: 20px;">
+      Already registered?
+      <a href="{% url 'login' %}" style="color: #ffcc00;">Log In</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

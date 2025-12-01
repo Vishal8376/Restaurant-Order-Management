@@ -1,0 +1,28 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="customer-dashboard" style="padding: 2rem; font-family: 'Segoe UI', sans-serif; background-color: #ffffff;">
+  <h1 style="font-size: 2rem; color: #d35400;">Welcome , {{ user.username }} !</h1>
+  <p style="margin-bottom: 1.5rem; font-size: 1.1rem; color: #d35400;">"Good food is the foundation of genuine happiness."</p>
+
+  <div class="quick-links" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+    <a href="{% url 'menu' %}" style="text-decoration: none; background-color: #ffecb3; padding: 1.5rem; border-radius: 10px; text-align: center;">
+      <h3 style="color: #e67e22;">🍽️ Place Order</h3>
+    </a>
+    <a href="{% url 'order_list' %}" style="text-decoration: none; background-color: #dff9fb; padding: 1.5rem; border-radius: 10px; text-align: center;">
+      <h3 style="color: #0984e3;">📜 My Orders</h3>
+    </a>
+    <a href="{% url 'payment_list' %}" style="text-decoration: none; background-color: #f9c2ff; padding: 1.5rem; border-radius: 10px; text-align: center;">
+      <h3 style="color: #6c5ce7;">💳 Payment History</h3>
+    </a>
+  </div>
+
+  <div style="margin-top: 2rem;">
+    <h2 style="color: #c0392b;">Today’s Special</h2>
+    <div style="margin-top: 1rem; background: #ffcc00; padding: 1rem 2rem; border-radius: 12px;">
+      <h3>🔥 Chicken Biryani - ₹270</h3>
+      <p>Spiced rice and chicken in perfect harmony. Try now!</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
